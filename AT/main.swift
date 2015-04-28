@@ -10,3 +10,12 @@ import Foundation
 
 println("Hello, World!")
 
+for(var i = 0; i < 20; i++){
+    if i % 5 == 0 {
+        println(i)
+    }
+    
+    i += 3
+    println("i=\(i)")
+    
+}
