@@ -67,8 +67,8 @@
 			children = (
 				A673552A1AF0095E00E3E828 /* main.swift */,
 				A6629D431AF07DD600724663 /* method2.swift */,
-				A6629D411AF0759800724663 /* NoiseReductionMethod1.swift */,
 				A6629D3F1AF0311600724663 /* NoiseReduction.swift */,
+				A6629D411AF0759800724663 /* NoiseReductionMethod1.swift */,
 				A6629D3D1AF0300C00724663 /* CSV.swift */,
 			);
 			path = AT;

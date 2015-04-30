@@ -25,32 +25,34 @@ func analyzeStocksAtPath(){
     var score : Double = 0.0
     
     if let list = CSV(contentsOfURL: NSURL(string: "file:///Volumes/StarTech%201/Dropbox/PommeDePain/list.csv")!, error: nil){
-//        println(list.rows.count)
+        //        println(list.rows.count)
         for i in 0...list.rows.count-1 {
             
             let fileStart = NSDate()
+            autoreleasepool({
+                
+                println(list.rows[i]["Filename"]! + " \(i)/\(list.rows.count)")
+                
+                var csvFile = CSV(contentsOfURL: NSURL(string: pathToDesktop + list.rows[i]["Filename"]!)!, error: nil)!
+                
+                var analysisResult = M1(csvFile)
+                
+                var data = analysisResult.data
+                
+                
+                
+                writeToFile(list.rows[i]["Filename"]!, data)
+                
+                
+                
+                if score < analysisResult.efficiency {
+                    score = analysisResult.efficiency
+                    println(NSString(format: "New efficiency record: %.2f%%", score))
+                }
+                
+            })
             
-            println(list.rows[i]["Filename"]!)
-            
-            var csvFile = CSV(contentsOfURL: NSURL(string: pathToDesktop + list.rows[i]["Filename"]!)!, error: nil)!
-            
-            var analysisResult = M1(csvFile)
-            
-            var data = analysisResult.data
-            
-            
-            
-            writeToFile(list.rows[i]["Filename"]!, data)
-            
-            
-            
-            if score < analysisResult.efficiency {
-                score = analysisResult.efficiency
-                println(NSString(format: "New efficiency record: %.2f%%", score))
-            }
-            
-            analysisResult = ([Dictionary<String,String>()], 0.0)
-//            println("Analyzing current file took \(NSDate().timeIntervalSinceDate(fileStart)) seconds.\n")
+            //            println("Analyzing current file took \(NSDate().timeIntervalSinceDate(fileStart)) seconds.\n")
             
         }
     }
@@ -63,9 +65,9 @@ func analyzeStocksAtPath(){
 
 func testAnalyzeStockAtPath(path:String){
     let start = NSDate()
-
+    
     writeToFile("test.csv", M1(CSV(contentsOfURL: NSURL(string: path)!, error: nil)!).data)
-
+    
     
     let end = NSDate()
     

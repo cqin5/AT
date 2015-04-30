@@ -25,7 +25,7 @@ public class CSV {
             
             self.headers = self.parseHeaders(fromLines: lines)
             self.rows = self.parseRows(fromLines: lines)
-            self.columns = self.parseColumns(fromLines: lines)
+            //self.columns = self.parseColumns(fromLines: lines)
         }
     }
     
@@ -75,7 +75,7 @@ public class CSV {
     }
     
     
-    deinit{
+    deinit {
         headers = []
         rows = []
         columns = Dictionary<String, [String]>()
