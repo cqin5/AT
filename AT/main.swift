@@ -9,6 +9,7 @@
 import Foundation
 
 var pathToTestFile = "file:///Users/cqin/Desktop/test.csv"
+var pathToTestResult = "file:///Users/cqin/Desktop/test-result.csv"
 
 
 var pathToDesktop = "file:///Users/cqin/Desktop/list/"
@@ -64,12 +65,31 @@ func analyzeStocksAtPath(){
 
 
 func testAnalyzeStockAtPath(path:String){
-    let start = NSDate()
+
+    var csvFile = CSV(contentsOfURL: NSURL(string: path)!, error: nil)!
+    var m1 = M1(csvFile)
     
-    writeToFile("test.csv", M1(CSV(contentsOfURL: NSURL(string: path)!, error: nil)!).data)
+    writeToFile("test-result.csv", m1.data)
     
+    for row in m1.data {
+        
+//        print(row["Open"]! + "\t ")
+//        print(row["High"]! + "\t ")
+//        print(row["Low"]! + "\t ")
+//        println(row["Close"]!)
+//        
+    }
     
-    let end = NSDate()
+}
+
+
+
+func testMethod2(path:String){
+    
+    var csvFile = CSV(contentsOfURL: NSURL(string: path)!, error: nil)!
+    var m2 = M2(csvFile)
+    
+    writeToFileAtPath("file:///Users/cqin/Desktop/test-result.csv", m2.data)
     
 }
 
@@ -87,9 +107,32 @@ func writeToFile(name: String, data:[Dictionary<String,String>]){
         
     }
     
-    //println(rows)
+//    println(rows)
+    var error = NSErrorPointer()
+    if !rows.writeToURL(NSURL(string: savePath + name)!, atomically: true, encoding: NSUTF8StringEncoding, error: error) {
+        println(error.debugDescription)
+    }
     
-    rows.writeToURL(NSURL(string: savePath + name)!, atomically: true, encoding: NSUTF8StringEncoding, error: nil)
+    
+}
+
+func writeToFileAtPath(fullPath: String, data:[Dictionary<String,String>]){
+    
+    var headers = "Date,Open,High,Low,Close,Volume,Adj Close"
+    var rows = headers + "\n"
+    
+    for row in data {
+        
+        rows += row["Date"]! + "," + row["Open"]! + "," + row["High"]! + "," + row["Low"]! + "," + row["Close"]! + "," + row["Volume"]! + "," + row["Adj Close"]! + "\n"
+        
+        
+    }
+    
+    //    println(rows)
+    var error = NSErrorPointer()
+    if !rows.writeToURL(NSURL(string: fullPath)!, atomically: true, encoding: NSUTF8StringEncoding, error: error) {
+        println(error.debugDescription)
+    }
     
     
 }
@@ -100,10 +143,8 @@ func writeToFile(name: String, data:[Dictionary<String,String>]){
 
 
 
-
-
 //testAnalyzeStockAtPath(pathToTestFile)
-analyzeStocksAtPath()
-
+//analyzeStocksAtPath()
+testMethod2(pathToTestFile)
 
 

@@ -1,25 +1,24 @@
 //
-//  method1.swift
+//  NoiseReductionMethod2.swift
 //  AT
 //
-//  Created by Chuhan Qin on 2015-04-28.
+//  Created by Chuhan Qin on 2015-04-30.
 //  Copyright (c) 2015 Chuhan Qin. All rights reserved.
 //
 
 import Foundation
 
-
-func detectTrend(first:Dictionary<NSString,NSString>, second:Dictionary<NSString,NSString>) -> Int {
-    var firstHigh : Float = (first["High"])!.floatValue
-    var firstLow : Float = (first["Low"])!.floatValue
-    var secondHigh : Float = (second["High"])!.floatValue
-    var secondLow : Float = (second["Low"])!.floatValue
+func detectTrend2(yesterday:Dictionary<NSString,NSString>, today:Dictionary<NSString,NSString>) -> Int {
+    var yesterdayHigh : Float = (yesterday["High"])!.floatValue
+    var yesterdayLow : Float = (yesterday["Low"])!.floatValue
+    var todayHigh : Float = (today["High"])!.floatValue
+    var todayLow : Float = (today["Low"])!.floatValue
     
-    if firstHigh < secondHigh && firstLow < secondLow {
+    if yesterdayHigh < todayHigh && yesterdayLow < todayLow {
         
         return RISING
         
-    } else if firstHigh > secondHigh && firstLow > secondLow {
+    } else if yesterdayHigh > todayHigh && yesterdayLow > todayLow {
         
         return DECLINING
         
@@ -33,47 +32,47 @@ func detectTrend(first:Dictionary<NSString,NSString>, second:Dictionary<NSString
 
 
 
-func mergeAsRising(first:Dictionary<NSString,NSString>, second:Dictionary<NSString,NSString>) -> Dictionary<NSString,NSString> {
+func mergeAsRising2(yesterday:Dictionary<NSString,NSString>, today:Dictionary<NSString,NSString>) -> Dictionary<NSString,NSString> {
     
     var result : Dictionary<NSString,NSString> = Dictionary()
     
-    var firstHigh : Float = (first["High"])!.floatValue
-    var firstLow : Float = (first["Low"])!.floatValue
-    var secondHigh : Float = (second["High"])!.floatValue
-    var secondLow : Float = (second["Low"])!.floatValue
+    var yesterdayHigh : Float = (yesterday["High"])!.floatValue
+    var yesterdayLow : Float = (yesterday["Low"])!.floatValue
+    var todayHigh : Float = (today["High"])!.floatValue
+    var todayLow : Float = (today["Low"])!.floatValue
     
-    result["High"] = "\(max(firstHigh,secondHigh))"
-    result["Low"] = "\(max(firstLow,secondLow))"
+    result["High"] = "\(max(yesterdayHigh,todayHigh))"
+    result["Low"] = "\(max(yesterdayLow,todayLow))"
     
-    result["Date"] = first["Date"]
+    result["Date"] = yesterday["Date"]
     result["Open"] = result["Low"]
     result["Close"] = result["High"]
-    result["Volume"] = NSString(format: "%d", (first["Volume"]!.integerValue + second["Volume"]!.integerValue) / 2)
-    result["Adj Close"] = first["Adj Close"]
+    result["Volume"] = NSString(format: "%d", (yesterday["Volume"]!.integerValue + today["Volume"]!.integerValue) / 2)
+    result["Adj Close"] = yesterday["Adj Close"]
     
     return result
 }
 
 
 
-func mergeAsDeclining(first:Dictionary<NSString,NSString>, second:Dictionary<NSString,NSString>) -> Dictionary<NSString,NSString> {
+func mergeAsDeclining2(yesterday:Dictionary<NSString,NSString>, today:Dictionary<NSString,NSString>) -> Dictionary<NSString,NSString> {
     
     var result : Dictionary<NSString,NSString> = Dictionary()
     
-    var firstHigh : Float = (first["High"])!.floatValue
-    var firstLow : Float = (first["Low"])!.floatValue
-    var secondHigh : Float = (second["High"])!.floatValue
-    var secondLow : Float = (second["Low"])!.floatValue
+    var yesterdayHigh : Float = (yesterday["High"])!.floatValue
+    var yesterdayLow : Float = (yesterday["Low"])!.floatValue
+    var todayHigh : Float = (today["High"])!.floatValue
+    var todayLow : Float = (today["Low"])!.floatValue
     
     
-    result["High"] = "\(min(firstHigh,secondHigh))"
-    result["Low"] = "\(min(firstLow,secondLow))"
+    result["High"] = "\(min(yesterdayHigh,todayHigh))"
+    result["Low"] = "\(min(yesterdayLow,todayLow))"
     
-    result["Date"] = first["Date"]
+    result["Date"] = yesterday["Date"]
     result["Open"] = result["High"]
     result["Close"] = result["Low"]
-    result["Volume"] = NSString(format: "%d", (first["Volume"]!.integerValue + second["Volume"]!.integerValue) / 2)
-    result["Adj Close"] = first["Adj Close"]
+    result["Volume"] = NSString(format: "%d", (yesterday["Volume"]!.integerValue + today["Volume"]!.integerValue) / 2)
+    result["Adj Close"] = yesterday["Adj Close"]
     
     
     
@@ -86,7 +85,7 @@ func mergeAsDeclining(first:Dictionary<NSString,NSString>, second:Dictionary<NSS
 
 
 
-func cleanUpAsRising(day: Dictionary<NSString,NSString>) -> Dictionary<NSString,NSString> {
+func cleanUpAsRising2(day: Dictionary<NSString,NSString>) -> Dictionary<NSString,NSString> {
     
     var result : Dictionary<NSString,NSString> = Dictionary()
     
@@ -104,7 +103,7 @@ func cleanUpAsRising(day: Dictionary<NSString,NSString>) -> Dictionary<NSString,
 
 
 
-func cleanUpAsDeclining(day:Dictionary<NSString,NSString>) -> Dictionary<NSString,NSString> {
+func cleanUpAsDeclining2(day:Dictionary<NSString,NSString>) -> Dictionary<NSString,NSString> {
     
     var result : Dictionary<NSString,NSString> = Dictionary()
     
@@ -127,20 +126,20 @@ func cleanUpAsDeclining(day:Dictionary<NSString,NSString>) -> Dictionary<NSStrin
 
 
 
-func M1(stock:CSV) -> (data: [Dictionary<String,String>], efficiency: Double) {
+func M2(stock:CSV) -> (data: [Dictionary<String,String>], efficiency: Double) {
     var countBeforeMerge = stock.rows.count
     var error = NSErrorPointer()
-    var i = 0
+    var i = 1 as Int
     var flag = CONTAINED
     
     //println("Before merging: \(countBeforeMerge)")
     
     
     while i != stock.rows.count-1 {
-//        println("\(i) and \(stock.rows.count)")
+        //        println("\(i) and \(stock.rows.count)")
         if true {
             
-            switch detectTrend(stock.rows[i], stock.rows[i+1]) {
+            switch detectTrend(stock.rows[i-1], stock.rows[i]) {
                 
             case RISING:
                 
@@ -157,21 +156,21 @@ func M1(stock:CSV) -> (data: [Dictionary<String,String>], efficiency: Double) {
                 i++
                 
             default:
-                mergeLoop: while detectTrend(stock.rows[i], stock.rows[i+1]) == CONTAINED {
+                mergeLoop: while detectTrend(stock.rows[i-1], stock.rows[i]) == CONTAINED {
                     //println("i: \(i), and \(stock.rows[i+1])")
                     //println("\(i) and \(stock.rows.count-1)")
                     switch flag {
                         
                     case RISING:
-                        stock.rows[i] = mergeAsRising(stock.rows[i], stock.rows[i+1]) as! [String:String]
+                        stock.rows[i] = mergeAsRising(stock.rows[i-1], stock.rows[i]) as! [String:String]
                     case DECLINING:
-                        stock.rows[i] = mergeAsDeclining(stock.rows[i], stock.rows[i+1]) as! [String:String]
+                        stock.rows[i] = mergeAsDeclining(stock.rows[i-1], stock.rows[i]) as! [String:String]
                     default:
-                        stock.rows[i] = mergeAsDeclining(stock.rows[i], stock.rows[i+1]) as! [String:String]
+                        stock.rows[i] = mergeAsDeclining(stock.rows[i-1], stock.rows[i]) as! [String:String]
                     }
                     
-                    stock.rows.removeAtIndex(i+1)
-                    if i+2 > stock.rows.count {
+                    stock.rows.removeAtIndex(i)
+                    if i+1 > stock.rows.count {
                         break mergeLoop
                     }
                 }
@@ -193,7 +192,7 @@ func M1(stock:CSV) -> (data: [Dictionary<String,String>], efficiency: Double) {
     var efficiency : Double = Double(countBeforeMerge-countAfterMerge) / Double(countBeforeMerge) * 100
     
     //println(NSString(format: "%.2f%%", efficiency))
-
+    
     return (stock.rows, efficiency)
     
     
