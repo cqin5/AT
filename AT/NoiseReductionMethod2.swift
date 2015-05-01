@@ -136,7 +136,7 @@ func M2(stock:CSV) -> (data: [Dictionary<String,String>], efficiency: Double) {
     
     
     while i != stock.rows.count {
-                println("\(i) and \(stock.rows.count)")
+//                println("\(i) and \(stock.rows.count)")
         
             
             switch detectTrend2(stock.rows[i-1], stock.rows[i]) {
@@ -184,9 +184,9 @@ func M2(stock:CSV) -> (data: [Dictionary<String,String>], efficiency: Double) {
                     
 //                    i++
                     
-//                    if i+1 > stock.rows.count {
-//                        break mergeLoop
-//                    }
+                    if i+1 > stock.rows.count {
+                        break mergeLoop
+                    }
                 }
                 
                 
