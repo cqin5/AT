@@ -8,8 +8,8 @@
 
 import Foundation
 
-var pathToTestFile = "file:///Users/cqin/Desktop/test.csv"
-var pathToTestResult = "file:///Users/cqin/Desktop/test-result.csv"
+var pathToTestFile = "file:///Users/cqin/Desktop/analyzedStocks/BBRY.csv" //"file:///Users/cqin/Desktop/test.csv"
+var pathToTestResult = "file:///Users/cqin/Desktop/BBRY-M2.csv" //"file:///Users/cqin/Desktop/test-result.csv"
 
 
 var pathToDesktop = "file:///Users/cqin/Desktop/list/"
@@ -89,7 +89,19 @@ func testMethod2(path:String){
     var csvFile = CSV(contentsOfURL: NSURL(string: path)!, error: nil)!
     var m2 = M2(csvFile)
     
-    writeToFileAtPath("file:///Users/cqin/Desktop/test-result.csv", m2.data)
+    for row in m2.data {
+        print(row["Date"]! + "\t ")
+                        print(row["Open"]! + "\t ")
+        print(row["High"]! + "\t ")
+        print(row["Low"]! + "\t ")
+                        println(row["Close"]!)
+        
+    }
+    
+    
+    writeToFileAtPath("file:///Users/cqin/Desktop/BBRY-M2.csv", m2.data)
+    
+    
     
 }
 
@@ -138,13 +150,49 @@ func writeToFileAtPath(fullPath: String, data:[Dictionary<String,String>]){
 }
 
 
+func runM2AtPath(path:String){
+    
+    var error = NSErrorPointer()
+    var newPath = "file:///Users/cqin/Desktop/analyzedStocks/BBRY.csv"
+    
+    if let csvFile = CSV(contentsOfURL: NSURL(string: path as String)!, error: error) {
+        var m2 = M2(csvFile)
+    
+//    for row in m2.data {
+//        print(row["Date"]! + "\t ")
+//        print(row["Open"]! + "\t ")
+//        print(row["High"]! + "\t ")
+//        print(row["Low"]! + "\t ")
+//        println(row["Close"]!)
+//        
+//    }
+    
+        var savedFilePath = "file:///Users/" + NSUserName() + "/Desktop/" + path.lastPathComponent
+        println(savedFilePath)
+        writeToFileAtPath(savedFilePath, m2.data)
+    } else {
+        println(error.debugDescription)
+    }
+//    println(NSUserName())
+    println("Saved to: " +  NSUserName() + "/Desktop/" + path.lastPathComponent)
+}
 
 
 
-
+func start(){
+    
+    //var inputData = NSFileHandle.fileHandleWithStandardInput().availableData
+    var input = NSString(data: NSFileHandle.fileHandleWithStandardInput().availableData, encoding:NSUTF8StringEncoding)
+    //println(input!)
+    var path = input?.stringByTrimmingCharactersInSet(NSCharacterSet.newlineCharacterSet())
+    runM2AtPath(path!)
+//    print("Enter name: ")
+}
 
 //testAnalyzeStockAtPath(pathToTestFile)
 //analyzeStocksAtPath()
-testMethod2(pathToTestFile)
+//testMethod2(pathToTestFile)
+start()
+
 
 

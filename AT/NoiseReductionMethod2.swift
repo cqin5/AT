@@ -44,11 +44,11 @@ func mergeAsRising2(yesterday:Dictionary<NSString,NSString>, today:Dictionary<NS
     result["High"] = "\(max(yesterdayHigh,todayHigh))"
     result["Low"] = "\(max(yesterdayLow,todayLow))"
     
-    result["Date"] = yesterday["Date"]
+    result["Date"] = today["Date"]
     result["Open"] = result["Low"]
     result["Close"] = result["High"]
     result["Volume"] = NSString(format: "%d", (yesterday["Volume"]!.integerValue + today["Volume"]!.integerValue) / 2)
-    result["Adj Close"] = yesterday["Adj Close"]
+    result["Adj Close"] = today["Adj Close"]
     
     return result
 }
@@ -68,11 +68,11 @@ func mergeAsDeclining2(yesterday:Dictionary<NSString,NSString>, today:Dictionary
     result["High"] = "\(min(yesterdayHigh,todayHigh))"
     result["Low"] = "\(min(yesterdayLow,todayLow))"
     
-    result["Date"] = yesterday["Date"]
+    result["Date"] = today["Date"]
     result["Open"] = result["High"]
     result["Close"] = result["Low"]
     result["Volume"] = NSString(format: "%d", (yesterday["Volume"]!.integerValue + today["Volume"]!.integerValue) / 2)
-    result["Adj Close"] = yesterday["Adj Close"]
+    result["Adj Close"] = today["Adj Close"]
     
     
     
@@ -135,52 +135,64 @@ func M2(stock:CSV) -> (data: [Dictionary<String,String>], efficiency: Double) {
     //println("Before merging: \(countBeforeMerge)")
     
     
-    while i != stock.rows.count-1 {
-        //        println("\(i) and \(stock.rows.count)")
-        if true {
+    while i != stock.rows.count {
+                println("\(i) and \(stock.rows.count)")
+        
             
-            switch detectTrend(stock.rows[i-1], stock.rows[i]) {
+            switch detectTrend2(stock.rows[i-1], stock.rows[i]) {
                 
             case RISING:
                 
-                stock.rows[i] = cleanUpAsRising(stock.rows[i]) as! [String:String]
+                stock.rows[i] = cleanUpAsRising2(stock.rows[i]) as! [String:String]
                 
                 flag = RISING
                 i++
                 
             case DECLINING:
                 
-                stock.rows[i] = cleanUpAsDeclining(stock.rows[i]) as! [String:String]
+                stock.rows[i] = cleanUpAsDeclining2(stock.rows[i]) as! [String:String]
                 
                 flag = DECLINING
                 i++
                 
             default:
-                mergeLoop: while detectTrend(stock.rows[i-1], stock.rows[i]) == CONTAINED {
+                mergeLoop: while detectTrend2(stock.rows[i-1], stock.rows[i]) == CONTAINED {
                     //println("i: \(i), and \(stock.rows[i+1])")
                     //println("\(i) and \(stock.rows.count-1)")
                     switch flag {
                         
                     case RISING:
-                        stock.rows[i] = mergeAsRising(stock.rows[i-1], stock.rows[i]) as! [String:String]
+                        stock.rows[i] = mergeAsRising2(stock.rows[i-1], stock.rows[i]) as! [String:String]
+//                        
+//                        if i == stock.rows.count-1 {
+//                            stock.rows[i] = cleanUpAsRising2(stock.rows[i]) as! [String:String]
+//                        }
+                        
                     case DECLINING:
-                        stock.rows[i] = mergeAsDeclining(stock.rows[i-1], stock.rows[i]) as! [String:String]
+                        stock.rows[i] = mergeAsDeclining2(stock.rows[i-1], stock.rows[i]) as! [String:String]
+                        
+//                        if i == stock.rows.count-1 {
+//                            stock.rows[i] = cleanUpAsDeclining2(stock.rows[i]) as! [String:String]
+//                        }
+//                        
                     default:
-                        stock.rows[i] = mergeAsDeclining(stock.rows[i-1], stock.rows[i]) as! [String:String]
+                        stock.rows[i] = mergeAsDeclining2(stock.rows[i-1], stock.rows[i]) as! [String:String]
                     }
                     
-                    stock.rows.removeAtIndex(i)
-                    if i+1 > stock.rows.count {
-                        break mergeLoop
-                    }
+                    stock.rows.removeAtIndex(i-1)
+                    
+                    
+//                    i++
+                    
+//                    if i+1 > stock.rows.count {
+//                        break mergeLoop
+//                    }
                 }
                 
                 
             }
             
-        } else {
-            break
-        }
+        
         //           println(file.rows[i]["High"]!)
         
         
